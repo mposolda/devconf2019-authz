@@ -232,23 +232,6 @@
                     <version>${version.enforcer.maven.plugin}</version>
                     <executions>
                         <execution>
-                            <id>enforce-quickstart-realm-file-exist</id>
-                            <goals>
-                                <goal>enforce</goal>
-                            </goals>
-                            <phase>none</phase>
-                            <configuration>
-                                <rules>
-                                    <requireFilesExist>
-                                        <files>
-                                            <file>${basedir}/src/test/resources/quickstart-realm.json</file>
-                                        </files>
-                                    </requireFilesExist>
-                                </rules>
-                                <fail>true</fail>
-                            </configuration>
-                        </execution>
-                        <execution>
                             <id>enforce-keycloak-file-exist</id>
                             <goals>
                                 <goal>enforce</goal>

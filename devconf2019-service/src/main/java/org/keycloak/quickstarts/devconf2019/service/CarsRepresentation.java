@@ -24,13 +24,24 @@ public class CarsRepresentation {
 
     public static class CarRepresentation {
 
+        public CarRepresentation() {
+        }
+
+        public CarRepresentation(String carName, String carDescription, String carBase64Img, OwnerRepresentation owner) {
+            this.carName = carName;
+            this.carDescription = carDescription;
+            this.carBase64Img = carBase64Img;
+            this.owner = owner;
+        }
+
+
         private String carName;
+
+        private String carDescription;
 
         private String carBase64Img;
 
-        private String ownerId;
-
-        private String ownerUsername;
+        private OwnerRepresentation owner;
 
         // TODO: resourceId?
 
@@ -43,6 +54,14 @@ public class CarsRepresentation {
             this.carName = carName;
         }
 
+        public String getCarDescription() {
+            return carDescription;
+        }
+
+        public void setCarDescription(String carDescription) {
+            this.carDescription = carDescription;
+        }
+
         public String getCarBase64Img() {
             return carBase64Img;
         }
@@ -51,20 +70,12 @@ public class CarsRepresentation {
             this.carBase64Img = carBase64Img;
         }
 
-        public String getOwnerId() {
-            return ownerId;
+        public OwnerRepresentation getOwner() {
+            return owner;
         }
 
-        public void setOwnerId(String ownerId) {
-            this.ownerId = ownerId;
-        }
-
-        public String getOwnerUsername() {
-            return ownerUsername;
-        }
-
-        public void setOwnerUsername(String ownerUsername) {
-            this.ownerUsername = ownerUsername;
+        public void setOwner(OwnerRepresentation owner) {
+            this.owner = owner;
         }
 
         @JsonIgnore
