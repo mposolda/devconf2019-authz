@@ -1,0 +1,257 @@
+{
+  "realm": "cars",
+  "enabled": true,
+  "userManagedAccessAllowed": "true",
+  "sslRequired": "external",
+  "privateKey": "MIICXAIBAAKBgQCrVrCuTtArbgaZzL1hvh0xtL5mc7o0NqPVnYXkLvgcwiC3BjLGw1tGEGoJaXDuSaRllobm53JBhjx33UNv+5z/UMG4kytBWxheNVKnL6GgqlNabMaFfPLPCF8kAgKnsi79NMo+n6KnSY8YeUmec/p2vjO2NjsSAVcWEQMVhJ31LwIDAQABAoGAfmO8gVhyBxdqlxmIuglbz8bcjQbhXJLR2EoS8ngTXmN1bo2L90M0mUKSdc7qF10LgETBzqL8jYlQIbt+e6TH8fcEpKCjUlyq0Mf/vVbfZSNaVycY13nTzo27iPyWQHK5NLuJzn1xvxxrUeXI6A2WFpGEBLbHjwpx5WQG9A+2scECQQDvdn9NE75HPTVPxBqsEd2z10TKkl9CZxu10Qby3iQQmWLEJ9LNmy3acvKrE3gMiYNWb6xHPKiIqOR1as7L24aTAkEAtyvQOlCvr5kAjVqrEKXalj0Tzewjweuxc0pskvArTI2Oo070h65GpoIKLc9jf+UA69cRtquwP93aZKtW06U8dQJAF2Y44ks/mK5+eyDqik3koCI08qaC8HYq2wVl7G2QkJ6sbAaILtcvD92ToOvyGyeE0flvmDZxMYlvaZnaQ0lcSQJBAKZU6umJi3/xeEbkJqMfeLclD27XGEFoPeNrmdx0q10Azp4NfJAY+Z8KRyQCR2BEG+oNitBOZ+YXF9KCpH3cdmECQHEigJhYg+ykOvr1aiZUMFT72HU0jnmQe2FVekuG+LJUt2Tm7GtMjTFoGpf0JwrVuZN39fOYAlo+nTixgeW7X8Y=",
+  "publicKey": "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCrVrCuTtArbgaZzL1hvh0xtL5mc7o0NqPVnYXkLvgcwiC3BjLGw1tGEGoJaXDuSaRllobm53JBhjx33UNv+5z/UMG4kytBWxheNVKnL6GgqlNabMaFfPLPCF8kAgKnsi79NMo+n6KnSY8YeUmec/p2vjO2NjsSAVcWEQMVhJ31LwIDAQAB",
+  "requiredCredentials": [
+    "password"
+  ],
+  "users": [
+    {
+      "username": "alice",
+      "enabled": true,
+      "email": "alice@keycloak.org",
+      "firstName": "Alice",
+      "lastName": "In Chains",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "alice"
+        }
+      ],
+      "realmRoles": [
+        "user", "uma_authorization"
+      ],
+      "clientRoles": {
+        "cars-service": [
+          "manage-cars"
+        ],
+        "account": [
+          "manage-account"
+        ]
+      }
+    },
+    {
+      "username": "jdoe",
+      "enabled": true,
+      "email": "jdoe@keycloak.org",
+      "firstName": "John",
+      "lastName": "Doe",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "jdoe"
+        }
+      ],
+      "realmRoles": [
+        "user", "uma_authorization"
+      ],
+      "clientRoles": {
+        "cars-service": [
+          "manage-cars"
+        ],
+        "account": [
+          "manage-account"
+        ]
+      }
+    },
+    {
+      "username": "admin",
+      "enabled": true,
+      "email": "admin@admin.com",
+      "firstName": "Admin",
+      "lastName": "Istrator",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "admin"
+        }
+      ],
+      "realmRoles": [
+        "admin", "uma_authorization"
+      ],
+      "clientRoles": {
+        "realm-management": [
+          "realm-admin"
+        ],
+        "cars-service": [
+          "manage-cars"
+        ],
+        "account": [
+          "manage-account"
+        ]
+      }
+    },
+    {
+      "username": "service-account-cars-service",
+      "enabled": true,
+      "email": "service-account-cars-service@placeholder.org",
+      "serviceAccountClientId": "cars-service",
+      "clientRoles": {
+        "cars-service" : ["uma_protection"]
+      }
+    }
+  ],
+  "roles": {
+    "realm": [
+      {
+        "name": "user",
+        "description": "User privileges"
+      },
+      {
+        "name": "admin",
+        "description": "Administrator privileges"
+      }
+    ]
+  },
+  "clients": [
+    {
+      "clientId": "cars-app",
+      "enabled": true,
+      "adminUrl": "http://localhost:8080/app",
+      "baseUrl": "http://localhost:8080/app",
+      "publicClient": true,
+      "consentRequired" : true,
+      "fullScopeAllowed" : true,
+      "redirectUris": [
+        "http://localhost:8080/app/*",
+        "http://localhost:8080/sso/login/*"
+      ],
+      "webOrigins": ["http://localhost:8080"]
+    },
+    {
+      "clientId": "cars-service",
+      "secret": "secret",
+      "enabled": true,
+      "baseUrl": "http://localhost:8081/cars",
+      "authorizationServicesEnabled" : true,
+      "authorizationSettings": {
+        "allowRemoteResourceManagement": true,
+        "policyEnforcementMode": "ENFORCING",
+        "resources": [
+          {
+            "name": "Admin Resources",
+            "uri": "/admin/*",
+            "type": "http://cars.com/admin",
+            "scopes": [
+              {
+                "name": "admin:manage"
+              }
+            ]
+          },
+          {
+            "name": "Car Resource",
+            "uri": "/car/*",
+            "type": "http://cars.com/car",
+            "scopes": [
+              {
+                "name": "car:delete"
+              },
+              {
+                "name": "car:view"
+              }
+            ]
+          }
+        ],
+        "policies": [
+          {
+            "name": "Only Owner and Administrators Policy",
+            "description": "Defines that only the resource owner and administrators can do something",
+            "type": "aggregate",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "applyPolicies": "[\"Administration Policy\",\"Only Owner Policy\"]"
+            }
+          },
+          {
+            "name": "Administration Policy",
+            "description": "Defines that only administrators from a specific network address can do something.",
+            "type": "aggregate",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "applyPolicies": "[\"Any Admin Policy\",\"Only From a Specific Client Address\"]"
+            }
+          },
+          {
+            "name": "Only From @keycloak.org or Admin",
+            "description": "Defines that only users from @keycloak.org",
+            "type": "js",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "code": "var context = $evaluation.getContext();\nvar identity = context.getIdentity();\nvar attributes = identity.getAttributes();\nvar email = attributes.getValue('email').asString(0);\n\nif (identity.hasRealmRole('admin') || email.endsWith('@keycloak.org')) {\n    $evaluation.grant();\n}"
+            }
+          },
+          {
+            "name": "Only Owner Policy",
+            "description": "Defines that only the resource owner is allowed to do something",
+            "type": "js",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "code": "var permission = $evaluation.getPermission();\nvar identity = $evaluation.getContext().getIdentity();\nvar resource = permission.getResource();\nif (resource) {\nif (resource.getOwner().equals(identity.getId())) {\n$evaluation.grant();\n}}"
+            }
+          },
+          {
+            "name": "Any Admin Policy",
+            "description": "Defines that adminsitrators can do something",
+            "type": "role",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "roles": "[{\"id\":\"admin\",\"required\":true}]"
+            }
+          },
+          {
+            "name": "Only From a Specific Client Address",
+            "description": "Defines that only clients from a specific address can do something",
+            "type": "js",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "code": "var contextAttributes = $evaluation.getContext().getAttributes();\n\nif (contextAttributes.containsValue('kc.client.network.ip_address', '127.0.0.1')) {\n    $evaluation.grant();\n}"
+            }
+          },
+          {
+            "name": "Any User Policy",
+            "description": "Defines that only users from well known clients are allowed to access",
+            "type": "role",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "roles": "[{\"id\":\"user\",\"required\":false},{\"id\":\"cars-service/manage-cars\",\"required\":true}]"
+            }
+          },
+          {
+            "name": "Admin Resource Permission",
+            "description": "General policy for any administrative resource.",
+            "type": "resource",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "defaultResourceType": "http://cars.com/admin",
+              "applyPolicies": "[\"Administration Policy\"]",
+              "default": "true"
+            }
+          },
+          {
+            "name": "Car Resource Permission",
+            "description": "A default permission that defines access for any car resource",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "resources": "[\"Car Resource\"]",
+              "scopes": "[\"car:view\",\"car:delete\"]",
+              "applyPolicies": "[\"Only Owner and Administrators Policy\"]"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

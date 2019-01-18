@@ -21,7 +21,7 @@
 
     <groupId>org.keycloak.quickstarts</groupId>
     <artifactId>devconf2019-parent</artifactId>
-    <version>4.8.2.Final</version>
+    <version>4.8.2.Final-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Devconf 2019 Quickstart: parent</name>
     <description>Parent</description>
@@ -36,7 +36,7 @@
 
     <properties>
         <version.wildfly>14.0.1.Final</version.wildfly>
-        <version.keycloak>${project.version}</version.keycloak>
+        <version.keycloak>4.8.2.Final</version.keycloak>
 
         <version.wildfly.maven.plugin>1.2.2.Final</version.wildfly.maven.plugin>
         <servlet.api.30.version>1.0.2.Final</servlet.api.30.version>
@@ -250,8 +250,32 @@
                         </execution>
                     </executions>
                 </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>${version.compiler.maven.plugin}</version>
+                    <configuration>
+                        <source>${maven.compiler.source}</source>
+                        <target>${maven.compiler.target}</target>
+                    </configuration>
+                </plugin>
             </plugins>
         </pluginManagement>
+
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${version.compiler.maven.plugin}</version>
+                <configuration>
+                    <source>${maven.compiler.source}</source>
+                    <target>${maven.compiler.target}</target>
+                </configuration>
+            </plugin>
+        </plugins>
+
     </build>
 
     <profiles>

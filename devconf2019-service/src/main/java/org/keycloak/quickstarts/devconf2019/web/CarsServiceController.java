@@ -1,9 +1,6 @@
 package org.keycloak.quickstarts.devconf2019.web;
 
 import java.security.Principal;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -27,10 +24,7 @@ public class CarsServiceController {
     HttpServletRequest request;
 
     @GetMapping(value = "/cars", produces = MediaType.APPLICATION_JSON_VALUE)
-    public CarsRepresentation getCars() {
-        // TODO: Uncomment this to have principal here:
-        // public CarsRepresentation getCars(Principal principal) {
-
+    public CarsRepresentation getCars(Principal principal) {
         return carsService.getCars(null);
     }
 
