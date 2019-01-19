@@ -19,7 +19,7 @@ public class CarsService {
 
     public CarRepresentation generateCarForUser(String userId, String username) {
         InMemoryCarsDB.Car car = db.giveRandomCarToUser(userId, username);
-        return new CarRepresentation(car.getName(), car.getDescription(), null, car.getOwner());
+        return new CarRepresentation(car.getId(), car.getName(), null, car.getOwner());
     }
 
 
@@ -28,14 +28,14 @@ public class CarsService {
         Map<String, List<CarRepresentation>> carsRep = new HashMap<>();
 
         db.getCarsWithOwner().forEach((InMemoryCarsDB.Car car) -> {
-            String ownerUsername = car.getOwner().getOwnerUsername();
+            String ownerUsername = car.getOwner().getUsername();
 
             List<CarRepresentation> ownerCars;
             if (!carsRep.containsKey(ownerUsername)) {
                 carsRep.put(ownerUsername, new ArrayList<>());
             }
 
-            carsRep.get(ownerUsername).add(new CarRepresentation(car.getName(), car.getDescription(), null,
+            carsRep.get(ownerUsername).add(new CarRepresentation(car.getId(), car.getName(), null,
                     car.getOwner()));
         });
 
@@ -43,5 +43,14 @@ public class CarsService {
     }
 
 
+    public CarRepresentation getCarById(String carId) {
+        InMemoryCarsDB.Car car = db.getCarById(carId);
+        return new CarRepresentation(car.getId(), car.getName(), car.getBase64Img(), car.getOwner());
+    }
+
+
+    public void deleteCarById(String carId) {
+        db.deleteCarById(carId);
+    }
 
 }

@@ -28,24 +28,24 @@ public class InMemoryCarsDB {
         log.info("Reading cars DB");
 
         try {
-            cars.add(new Car("yellow_van_dhl", "Yellow Van DHL", ImgUtil.readImage("IMG_20190118_082440.jpg")));
+            cars.add(new Car("1", "Yellow Van DHL", ImgUtil.readImage("IMG_20190118_082440.jpg")));
 
-            cars.add(new Car("yellow_towing_vehicle", "Yellow Towing Vehicle", ImgUtil.readImage("IMG_20190118_083037.jpg")));
-            cars.add(new Car("vw_transporter_green_bus", "VW Transporter - Green Bus", ImgUtil.readImage("IMG_20190118_083128.jpg")));
-            cars.add(new Car("white_alpha_romeo", "White Alpha Romeo", ImgUtil.readImage("IMG_20190118_083223.jpg")));
-            cars.add(new Car("green_cool_car", "Very Cool Green Car", ImgUtil.readImage("IMG_20190118_083253.jpg")));
-            cars.add(new Car("red_mixer", "Red Mixer", ImgUtil.readImage("IMG_20190118_083333.jpg")));
+            cars.add(new Car("2", "Yellow Towing Vehicle", ImgUtil.readImage("IMG_20190118_083037.jpg")));
+            cars.add(new Car("3", "VW Transporter - Green Bus", ImgUtil.readImage("IMG_20190118_083128.jpg")));
+            cars.add(new Car("4", "White Alpha Romeo", ImgUtil.readImage("IMG_20190118_083223.jpg")));
+            cars.add(new Car("5", "Very Cool Green Car", ImgUtil.readImage("IMG_20190118_083253.jpg")));
+            cars.add(new Car("6", "Red Mixer", ImgUtil.readImage("IMG_20190118_083333.jpg")));
 
-            cars.add(new Car("red_train", "Red Train", ImgUtil.readImage("IMG_20190118_083404.jpg")));
-            cars.add(new Car("red_ferrari", "Red Ferrari", ImgUtil.readImage("IMG_20190118_083457.jpg")));
-            cars.add(new Car("hippies_vw_transporter", "VW Transporter - Hippies Bus", ImgUtil.readImage("IMG_20190118_083547.jpg")));
+            cars.add(new Car("7", "Red Train", ImgUtil.readImage("IMG_20190118_083404.jpg")));
+            cars.add(new Car("8", "Red Ferrari", ImgUtil.readImage("IMG_20190118_083457.jpg")));
+            cars.add(new Car("9", "VW Transporter - Hippies Bus", ImgUtil.readImage("IMG_20190118_083547.jpg")));
 
-            cars.add(new Car("white_cistern", "White Cistern Truck", ImgUtil.readImage("IMG_20190118_083607.jpg")));
-            cars.add(new Car("blue_bmw", "Blue BMW", ImgUtil.readImage("IMG_20190118_083638.jpg")));
-            cars.add(new Car("snowplow", "Snowplow", ImgUtil.readImage("IMG_20190118_083734.jpg")));
-            cars.add(new Car("blue_rescue_jeep", "Blue Rescue Jeep", ImgUtil.readImage("IMG_20190118_083831.jpg")));
-            cars.add(new Car("black_carabinieri", "Black Carabinieri", ImgUtil.readImage("IMG_20190118_084023.jpg")));
-            cars.add(new Car("yellow_truck_deere", "Yellow Truck - Deere", ImgUtil.readImage("IMG_20190118_084119.jpg")));
+            cars.add(new Car("10", "White Cistern Truck", ImgUtil.readImage("IMG_20190118_083607.jpg")));
+            cars.add(new Car("11", "Blue BMW", ImgUtil.readImage("IMG_20190118_083638.jpg")));
+            cars.add(new Car("12", "Snowplow", ImgUtil.readImage("IMG_20190118_083734.jpg")));
+            cars.add(new Car("13", "Blue Rescue Jeep", ImgUtil.readImage("IMG_20190118_083831.jpg")));
+            cars.add(new Car("14", "Black Carabinieri", ImgUtil.readImage("IMG_20190118_084023.jpg")));
+            cars.add(new Car("15", "Yellow Truck - Deere", ImgUtil.readImage("IMG_20190118_084119.jpg")));
         } catch (IOException ioe) {
             throw new RuntimeException("Error when initializing cars", ioe);
         }
@@ -74,6 +74,23 @@ public class InMemoryCarsDB {
     }
 
 
+    public Car getCarById(String carId) {
+        // TODO: Better handle case when car doesn't exists...
+        return cars.stream().filter((Car car) -> car.getId().equals(carId)).findFirst().get();
+    }
+
+
+    public void deleteCarById(String carId) {
+        // TODO: Better handle case when car doesn't exists...
+        Car car = getCarById(carId);
+
+        // This means just deleting owner
+        synchronized(lock) {
+            car.setOwner(null);
+        }
+    }
+
+
     // Return only the cars with non-null owner
     public Stream<Car> getCarsWithOwner() {
         return cars.stream()
@@ -83,30 +100,30 @@ public class InMemoryCarsDB {
 
     public class Car {
 
+        private final String id;
         private final String name;
-        private final String description;
         private final String base64Img;
 
         // Null when car is still "free". It is not very nice to track both ID and username here, but should be fine for the example purpose
         private OwnerRepresentation owner;
 
-        public Car(String name, String description, String base64Img) {
+        public Car(String id, String name, String base64Img) {
+            this.id = id;
             this.name = name;
-            this.description = description;
             this.base64Img = base64Img;
         }
 
 
-        public String getName() {
-            return name;
+        public String getId() {
+            return id;
         }
 
         public String getBase64Img() {
             return base64Img;
         }
 
-        public String getDescription() {
-            return description;
+        public String getName() {
+            return name;
         }
 
         public OwnerRepresentation getOwner() {

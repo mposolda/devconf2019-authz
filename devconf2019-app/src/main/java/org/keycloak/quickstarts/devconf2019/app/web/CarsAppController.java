@@ -18,6 +18,7 @@ import org.keycloak.quickstarts.devconf2019.service.InMemoryCarsDB;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.client.HttpServerErrorException;
@@ -55,13 +56,29 @@ public class CarsAppController {
     public String createRandomCar(Principal principal, Model model) {
         try {
             CarRepresentation newCar = carsClientService.createCar();
-            log.infof("Created new car %s for user %s", newCar.getName(), newCar.getOwner().getOwnerUsername());
+            log.infof("Created new car %s for user %s", newCar.getId(), newCar.getOwner().getUsername());
         } catch (HttpServerErrorException ex) {
             log.error("Failed to create car for user " + principal.getName(), ex);
             model.addAttribute("app_error", "Failed to create new car");
         }
 
         // Just re-show the page
+        return showCarsPage(principal, model);
+    }
+
+
+    @RequestMapping(value = "/app/details/{carId}", method = RequestMethod.GET)
+    public String getCarDetails(Principal principal, Model model, @PathVariable String carId) {
+        CarRepresentation detailedCar = carsClientService.getCarWithDetails(carId); // TODO: I don't need picture here. Improve...
+
+        model.addAttribute("car", detailedCar);
+        return "car-detail";
+    }
+
+
+    @RequestMapping(value = "/app/delete/{carId}", method = RequestMethod.GET)
+    public String deleteCar(Principal principal, Model model, @PathVariable String carId) {
+        carsClientService.deleteCar(carId);
         return showCarsPage(principal, model);
     }
 

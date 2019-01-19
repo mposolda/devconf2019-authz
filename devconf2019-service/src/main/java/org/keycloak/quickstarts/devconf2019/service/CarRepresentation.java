@@ -10,17 +10,17 @@ public class CarRepresentation {
     public CarRepresentation() {
     }
 
-    public CarRepresentation(String name, String description, String base64Img, OwnerRepresentation owner) {
+    public CarRepresentation(String id, String name, String base64Img, OwnerRepresentation owner) {
+        this.id = id;
         this.name = name;
-        this.description = description;
         this.base64Img = base64Img;
         this.owner = owner;
     }
 
 
-    private String name;
+    private String id;
 
-    private String description;
+    private String name;
 
     private String base64Img; // May be null when we're sending list of the cars
 
@@ -29,20 +29,20 @@ public class CarRepresentation {
     // TODO: resourceId?
 
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public String getName() {
         return name;
     }
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public String getBase64Img() {

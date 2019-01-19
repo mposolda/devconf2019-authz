@@ -23,12 +23,12 @@
     <artifactId>devconf2019-parent</artifactId>
     <version>4.8.2.Final-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <name>Devconf 2019 Quickstart: parent</name>
-    <description>Parent</description>
+    <id>Devconf 2019 Quickstart: parent</id>
+    <id>Parent</id>
 
     <licenses>
         <license>
-            <name>Apache License, Version 2.0.0</name>
+            <id>Apache License, Version 2.0.0</id>
             <url>http://www.apache.org/licenses/LICENSE-2.0</url>
             <distribution>repo</distribution>
         </license>

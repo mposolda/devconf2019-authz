@@ -37,4 +37,17 @@ public class CarsClientService {
         return newCar.getBody();
     }
 
+
+    public CarRepresentation getCarWithDetails(String carId) {
+        String detailsEndpoint = endpoint + "/details/" + carId;
+        ResponseEntity<CarRepresentation> newCar = template.getForEntity(detailsEndpoint, CarRepresentation.class);
+        return newCar.getBody();
+    }
+
+
+    public void deleteCar(String carId) {
+        String deleteEndpoint = endpoint + "/delete/" + carId;
+        template.delete(deleteEndpoint);
+    }
+
 }

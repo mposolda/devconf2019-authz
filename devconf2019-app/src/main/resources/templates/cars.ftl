@@ -26,7 +26,7 @@
             <h2>${username}'s cars</h2>
             <ul>
                 <#list cars[username] as car>
-                    <li>${car.description}</li>
+                    <li>${car.name} <a href="/app/details/${car.id}">Show Details</a> <a href="/app/delete/${car.id}">Delete</a></li>
                 </#list>
             </ul>
         </#list>

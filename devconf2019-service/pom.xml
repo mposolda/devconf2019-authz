@@ -12,7 +12,7 @@
 
     <artifactId>devconf2019-service</artifactId>
 
-    <name>devconf2019-service</name>
+    <id>devconf2019-service</id>
 
     <properties>
         <springboot-version>2.0.3.RELEASE</springboot-version>

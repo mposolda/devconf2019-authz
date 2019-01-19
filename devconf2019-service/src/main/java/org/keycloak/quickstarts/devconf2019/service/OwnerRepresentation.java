@@ -5,38 +5,38 @@ package org.keycloak.quickstarts.devconf2019.service;
  */
 public class OwnerRepresentation {
 
-    private String ownerId;
-    private String ownerUsername;
+    private String id;
+    private String username;
 
     public OwnerRepresentation() {
     }
 
 
-    public OwnerRepresentation(String ownerId, String ownerUsername) {
-        this.ownerId = ownerId;
-        this.ownerUsername = ownerUsername;
+    public OwnerRepresentation(String id, String username) {
+        this.id = id;
+        this.username = username;
     }
 
 
-    public String getOwnerId() {
-        return ownerId;
+    public String getId() {
+        return id;
     }
 
-    public void setOwnerId(String ownerId) {
-        this.ownerId = ownerId;
+    public void setId(String id) {
+        this.id = id;
     }
 
-    public String getOwnerUsername() {
-        return ownerUsername;
+    public String getUsername() {
+        return username;
     }
 
-    public void setOwnerUsername(String ownerUsername) {
-        this.ownerUsername = ownerUsername;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     @Override
     public int hashCode() {
-        return ownerId.hashCode() * 13 + ownerUsername.hashCode();
+        return id.hashCode() * 13 + username.hashCode();
     }
 
     @Override
@@ -48,14 +48,14 @@ public class OwnerRepresentation {
         }
 
         OwnerRepresentation that = (OwnerRepresentation) obj;
-        return that.ownerId.equals(ownerId) && that.ownerUsername.equals(ownerUsername);
+        return that.id.equals(id) && that.username.equals(username);
     }
 
     @Override
     public String toString() {
         return "OwnerRepresentation{" +
-                "ownerId='" + ownerId + '\'' +
-                ", ownerUsername='" + ownerUsername + '\'' +
+                "id='" + id + '\'' +
+                ", username='" + username + '\'' +
                 '}';
     }
 }

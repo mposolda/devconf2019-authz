@@ -13,7 +13,9 @@ import org.keycloak.representations.AccessToken;
 import org.keycloak.representations.IDToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -40,6 +42,18 @@ public class CarsServiceController {
     public CarRepresentation generateCar(Principal principal) {
         AccessToken token = getBearerToken(principal);
         return carsService.generateCarForUser(token.getId(), token.getPreferredUsername());
+    }
+
+
+    @GetMapping(value = "/cars/details/{carId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public CarRepresentation getCarDetails(Principal principal, @PathVariable String carId) {
+        return carsService.getCarById(carId);
+    }
+
+
+    @DeleteMapping(value = "/cars/delete/{carId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public void deleteCar(Principal principal, @PathVariable String carId) {
+        carsService.deleteCarById(carId);
     }
 
 
