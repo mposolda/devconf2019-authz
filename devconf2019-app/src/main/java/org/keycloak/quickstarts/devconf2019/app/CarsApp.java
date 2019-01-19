@@ -4,8 +4,7 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 import net.rossillo.spring.web.mvc.CacheControlHandlerInterceptor;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.jboss.logging.Logger;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -16,7 +15,7 @@ import org.springframework.context.annotation.Bean;
 @SpringBootApplication
 public class CarsApp {
 
-    private static Log logger = LogFactory.getLog(CarsApp.class);
+    private static final Logger log = Logger.getLogger(CarsApp.class);
 
     @Bean
     protected ServletContextListener listener() {
@@ -24,12 +23,12 @@ public class CarsApp {
 
             @Override
             public void contextInitialized(ServletContextEvent sce) {
-                logger.info("ServletContext initialized");
+                log.info("ServletContext initialized");
             }
 
             @Override
             public void contextDestroyed(ServletContextEvent sce) {
-                logger.info("ServletContext destroyed");
+                log.info("ServletContext destroyed");
             }
 
         };

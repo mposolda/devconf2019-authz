@@ -7,6 +7,10 @@
     </head>
     <body>
 
+        <#if app_error??>
+           <font color="red">${app_error}</font>
+        </#if>
+
         <header>
             <a href="/logout" id="logout">Logout</a>
         </header>

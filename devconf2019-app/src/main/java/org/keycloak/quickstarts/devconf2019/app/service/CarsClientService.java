@@ -31,9 +31,10 @@ public class CarsClientService {
     }
 
 
-    public void createCar() {
+    public CarRepresentation createCar() {
         String createEndpoint = endpoint + "/create";
         ResponseEntity<CarRepresentation> newCar = template.postForEntity(createEndpoint, null, CarRepresentation.class);
+        return newCar.getBody();
     }
 
 }
