@@ -52,6 +52,8 @@ public class CarsAppController {
 
     private static final String REALM_NAME = "cars";
 
+    private static final String CLIENT_ID = "cars-app";
+
     @RequestMapping(value = "/app", method = RequestMethod.GET)
     public String showCarsPage(Principal principal, Model model) {
         model.addAttribute("cars", carsClientService.getCars());
@@ -62,7 +64,7 @@ public class CarsAppController {
         model.addAttribute("logout",  logoutUri);
 
         String accountUri = KeycloakUriBuilder.fromUri(AUTH_SERVER_URL).path(ServiceUrlConstants.ACCOUNT_SERVICE_PATH)
-                .build(REALM_NAME).toString();
+                .queryParam("referrer", CLIENT_ID).build(REALM_NAME).toString();
         model.addAttribute("accountUri", accountUri);
 
         AccessToken token = AppTokenUtil.getAccessToken(principal);

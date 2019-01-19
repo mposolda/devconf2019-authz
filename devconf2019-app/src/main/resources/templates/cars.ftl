@@ -9,6 +9,12 @@
     <body>
         <div class="wrapper" id="profile">
 
+            <#if app_error??>
+                <div class="content">
+                    <span class="error">${app_error}</span>
+                </div>
+            </#if>
+
             <div class="menu">
                 <button name="carBtn" onclick="location.href = '/app/create-car'">Buy New Car</button>
                 <button name="tokenBtn" onclick="location.href = '/app/show-token'">Token</button>
@@ -16,44 +22,52 @@
                 <button name="logoutBtn" onclick="location.href = '/logout'" type="button">Logout</button>
             </div>
 
-        <div class="content">
-            <div id="profile-content" class="message">
-                <table cellpadding="0" cellspacing="0">
-                    <tr>
-                        <td class="label">Username</td>
-                        <td><span id="username">${token.preferredUsername}</span></td>
-                    </tr>
-                    <tr class="even">
-                        <td class="label">Email</td>
-                        <td><span id="email">${token.email}</span></td>
-                    </tr>
-                    <tr>
-                        <td class="label">Name</td>
-                        <td><span id="firstName">${token.givenName} ${token.familyName}</span></td>
-                    </tr>
-                </table>
+            <div class="content">
+                <div id="profile-header" class="header">
+                    User profile
+                </div>
+
+                <div id="profile-content" class="message">
+                    <table cellpadding="0" cellspacing="0">
+                        <tr>
+                            <td class="label">Username</td>
+                            <td><span id="username">${token.preferredUsername}</span></td>
+                        </tr>
+                        <tr class="even">
+                            <td class="label">Email</td>
+                            <td><span id="email">${token.email}</span></td>
+                        </tr>
+                        <tr>
+                            <td class="label">Name</td>
+                            <td><span id="firstName">${token.givenName} ${token.familyName}</span></td>
+                        </tr>
+                    </table>
+                </div>
             </div>
+
+            <#list cars?keys as username>
+                <div class="users-divider">
+                </div>
+
+                <div class="content">
+                    <div class="header">
+                        ${username}'s cars
+                    </div>
+
+                    <div class="message">
+                        <table cellpadding="0" cellspacing="0">
+                            <#list cars[username] as car>
+                                <tr>
+                                    <td class="label">${car.name}</td>
+                                    <td><a href="/app/details/${car.id}">Show Details</a></td>
+                                    <td><a href="/app/delete/${car.id}">Delete</a></td>
+                                </tr>
+                            </#list>
+                        </table>
+                    </div>
+                </div>
+            </#list>
         </div>
-
-        </div>
-
-        <#if app_error??>
-           <font color="red">${app_error}</font>
-        </#if>
-
-
-        <h1>Cars Page</h1>
-        <p>User ${principal.name} made this request.</p>
-
-
-        <#list cars?keys as username>
-            <h2>${username}'s cars</h2>
-            <ul>
-                <#list cars[username] as car>
-                    <li>${car.name} <a href="/app/details/${car.id}">Show Details</a> <a href="/app/delete/${car.id}">Delete</a></li>
-                </#list>
-            </ul>
-        </#list>
 
     </body>
 </html>

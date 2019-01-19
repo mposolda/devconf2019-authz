@@ -68,11 +68,16 @@ hr {
     box-shadow: 2px 2px 10px 0px rgba(0, 0, 0, 0.5);
 }
 
+.content .header {
+    border: 1px solid #ccc;
+    font-size: 40px;
+}
+
 .content .message {
     padding: 10px;
     background-color: #fff;
     border: 1px solid #ccc;
-    font-size: 40px;
+    font-size: 30px;
 }
 
 #token-content {
@@ -88,6 +93,10 @@ hr {
     top: 10px;
     bottom: 10px;
     right: 10px;
+}
+
+.users-divider {
+    margin: 50px;
 }
 
 .error {
