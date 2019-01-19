@@ -5,8 +5,12 @@ package org.keycloak.quickstarts.devconf2019.service;
  */
 public class OwnerRepresentation {
 
-    private final String ownerId;
-    private final String ownerUsername;
+    private String ownerId;
+    private String ownerUsername;
+
+    public OwnerRepresentation() {
+    }
+
 
     public OwnerRepresentation(String ownerId, String ownerUsername) {
         this.ownerId = ownerId;
@@ -18,10 +22,17 @@ public class OwnerRepresentation {
         return ownerId;
     }
 
+    public void setOwnerId(String ownerId) {
+        this.ownerId = ownerId;
+    }
+
     public String getOwnerUsername() {
         return ownerUsername;
     }
 
+    public void setOwnerUsername(String ownerUsername) {
+        this.ownerUsername = ownerUsername;
+    }
 
     @Override
     public int hashCode() {

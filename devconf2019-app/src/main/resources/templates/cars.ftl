@@ -14,10 +14,15 @@
 <h1>Cars Page</h1>
 <p>User ${principal.name} made this request.</p>
 
-<h2>Cars</h2>
-<ul>
 
-</ul>
+    <#list cars?keys as username>
+        <h2>${username}'s cars</h2>
+        <ul>
+            <#list cars[username] as car>
+                <li>${car.carDescription}</li>
+            </#list>
+        </ul>
+    </#list>
 
 </body>
 </html>

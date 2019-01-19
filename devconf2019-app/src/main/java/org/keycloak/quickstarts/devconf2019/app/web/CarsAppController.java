@@ -31,7 +31,7 @@ public class CarsAppController {
 
     @RequestMapping(value = "/app", method = RequestMethod.GET)
     public String handleCustomersRequest(Principal principal, Model model) {
-        model.addAttribute("cars", carsClientService.getCars());
+        model.addAttribute("cars", carsClientService.getCars().getCars());
         model.addAttribute("principal",  principal);
         String logoutUri = KeycloakUriBuilder.fromUri("http://localhost:8180/auth").path(ServiceUrlConstants.TOKEN_SERVICE_LOGOUT_PATH)
                 .queryParam("redirect_uri", "http://localhost:8080/app").build("cars").toString();
