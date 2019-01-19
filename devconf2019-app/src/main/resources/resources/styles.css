@@ -127,6 +127,6 @@ td.button {
 
 td.button button {
     background-color: #ff0000;
-    background-image: linear-gradient(to bottom, #aaaaaa 0%, #cccccc 100%);
+    background-image: linear-gradient(to bottom, #777777 0%, #aaaaaa 100%);
     background-repeat: repeat-x;
 }

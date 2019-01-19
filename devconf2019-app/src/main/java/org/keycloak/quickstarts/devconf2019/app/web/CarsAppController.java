@@ -8,6 +8,9 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import net.rossillo.spring.web.mvc.CacheControl;
 import net.rossillo.spring.web.mvc.CachePolicy;
 import org.jboss.logging.Logger;
@@ -18,7 +21,6 @@ import org.keycloak.quickstarts.devconf2019.app.service.CarsClientService;
 import org.keycloak.quickstarts.devconf2019.app.util.AppTokenUtil;
 import org.keycloak.quickstarts.devconf2019.service.CarRepresentation;
 import org.keycloak.quickstarts.devconf2019.service.InMemoryCarsDB;
-import org.keycloak.quickstarts.devconf2019.util.ServiceTokenUtil;
 import org.keycloak.representations.AccessToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -37,6 +39,14 @@ import org.springframework.web.client.HttpServerErrorException;
 public class CarsAppController {
 
     private static final Logger log = Logger.getLogger(InMemoryCarsDB.class);
+
+
+    private static final ObjectMapper mapper = new ObjectMapper();
+
+    static {
+        mapper.enable(SerializationFeature.INDENT_OUTPUT);
+        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+    }
 
     @Autowired
     private CarsClientService carsClientService;
@@ -108,7 +118,7 @@ public class CarsAppController {
     @RequestMapping(value = "/app/img/{carId}", method = RequestMethod.GET)
     @ResponseBody
     public void getCarImg(Principal principal, Model model, @PathVariable String carId) throws IOException {
-        CarRepresentation detailedCar = carsClientService.getCarWithDetails(carId); // TODO: I don't need picture here. Improve...
+        CarRepresentation detailedCar = carsClientService.getCarWithDetails(carId);
         String imgString = detailedCar.getBase64Img();
 
         response.setContentType("image/jpeg");
@@ -118,6 +128,19 @@ public class CarsAppController {
         outputStream.write(decodedPicture);
 
         outputStream.flush();
+    }
+
+
+    @RequestMapping(value = "/app/show-token", method = RequestMethod.GET)
+    public String showToken(Principal principal, Model model) throws ServletException, IOException {
+        AccessToken token = AppTokenUtil.getAccessToken(principal);
+
+        model.addAttribute("token", token);
+
+        String tokenString = mapper.writeValueAsString(token);
+        model.addAttribute("tokenString", tokenString);
+
+        return "token";
     }
 
 
