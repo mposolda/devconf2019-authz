@@ -24,25 +24,23 @@ public class CarsService {
     }
 
 
-
-    public CarsRepresentation getCars(String userId) {
-        Map<String, List<CarsRepresentation.CarRepresentation>> carsRep = new HashMap<>();
+    // Key is ownerUsername, Values are all cars of this owner. Image is not set
+    public Map<String, List<CarRepresentation>> getCars(String userId) {
+        Map<String, List<CarRepresentation>> carsRep = new HashMap<>();
 
         db.getCarsWithOwner().forEach((InMemoryCarsDB.Car car) -> {
             String ownerUsername = car.getOwner().getOwnerUsername();
 
-            List<CarsRepresentation.CarRepresentation> ownerCars;
+            List<CarRepresentation> ownerCars;
             if (!carsRep.containsKey(ownerUsername)) {
                 carsRep.put(ownerUsername, new ArrayList<>());
             }
 
-            carsRep.get(ownerUsername).add(new CarsRepresentation.CarRepresentation(car.getCarName(), car.getCarDescription(), car.getCarBase64Img(),
+            carsRep.get(ownerUsername).add(new CarRepresentation(car.getName(), car.getDescription(), null,
                     car.getOwner()));
         });
 
-        CarsRepresentation result = new CarsRepresentation();
-        result.setCars(carsRep);
-        return result;
+        return carsRep;
     }
 
 

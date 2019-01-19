@@ -1,10 +1,12 @@
 package org.keycloak.quickstarts.devconf2019.web;
 
 import java.security.Principal;
+import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.keycloak.quickstarts.devconf2019.service.CarsRepresentation;
+import org.keycloak.quickstarts.devconf2019.service.CarRepresentation;
 import org.keycloak.quickstarts.devconf2019.service.CarsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -24,7 +26,7 @@ public class CarsServiceController {
     HttpServletRequest request;
 
     @GetMapping(value = "/cars", produces = MediaType.APPLICATION_JSON_VALUE)
-    public CarsRepresentation getCars(Principal principal) {
+    public Map<String, List<CarRepresentation>> getCars(Principal principal) {
         return carsService.getCars(null);
     }
 

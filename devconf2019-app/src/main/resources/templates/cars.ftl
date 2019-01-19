@@ -19,7 +19,7 @@
         <h2>${username}'s cars</h2>
         <ul>
             <#list cars[username] as car>
-                <li>${car.carDescription}</li>
+                <li>${car.description}</li>
             </#list>
         </ul>
     </#list>

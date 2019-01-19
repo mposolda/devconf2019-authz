@@ -22,7 +22,7 @@ public class InMemoryCarsDB {
 
     private final List<Car> cars = new ArrayList<>();
 
-    private Object lock = new Object();
+    private final Object lock = new Object();
 
     public InMemoryCarsDB() {
         log.info("Reading cars DB");
@@ -89,30 +89,30 @@ public class InMemoryCarsDB {
 
     public class Car {
 
-        private final String carName;
-        private final String carDescription;
-        private final String carBase64Img;
+        private final String name;
+        private final String description;
+        private final String base64Img;
 
         // Null when car is still "free". It is not very nice to track both ID and username here, but should be fine for the example purpose
         private OwnerRepresentation owner;
 
-        public Car(String carName, String carDescription, String carBase64Img) {
-            this.carName = carName;
-            this.carDescription = carDescription;
-            this.carBase64Img = carBase64Img;
+        public Car(String name, String description, String base64Img) {
+            this.name = name;
+            this.description = description;
+            this.base64Img = base64Img;
         }
 
 
-        public String getCarName() {
-            return carName;
+        public String getName() {
+            return name;
         }
 
-        public String getCarBase64Img() {
-            return carBase64Img;
+        public String getBase64Img() {
+            return base64Img;
         }
 
-        public String getCarDescription() {
-            return carDescription;
+        public String getDescription() {
+            return description;
         }
 
         public OwnerRepresentation getOwner() {
