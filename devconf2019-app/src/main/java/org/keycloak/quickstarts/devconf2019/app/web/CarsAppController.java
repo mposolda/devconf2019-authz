@@ -4,12 +4,14 @@ import java.io.IOException;
 import java.security.Principal;
 
 import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import net.rossillo.spring.web.mvc.CacheControl;
 import net.rossillo.spring.web.mvc.CachePolicy;
 import org.jboss.logging.Logger;
+import org.keycloak.common.util.Base64Url;
 import org.keycloak.common.util.KeycloakUriBuilder;
 import org.keycloak.constants.ServiceUrlConstants;
 import org.keycloak.quickstarts.devconf2019.app.service.CarsClientService;
@@ -21,6 +23,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.HttpServerErrorException;
 
 /**
@@ -80,6 +83,22 @@ public class CarsAppController {
     public String deleteCar(Principal principal, Model model, @PathVariable String carId) {
         carsClientService.deleteCar(carId);
         return showCarsPage(principal, model);
+    }
+
+
+    @RequestMapping(value = "/app/img/{carId}", method = RequestMethod.GET)
+    @ResponseBody
+    public void getCarImg(Principal principal, Model model, @PathVariable String carId) throws IOException {
+        CarRepresentation detailedCar = carsClientService.getCarWithDetails(carId); // TODO: I don't need picture here. Improve...
+        String imgString = detailedCar.getBase64Img();
+
+        response.setContentType("image/jpeg");
+        ServletOutputStream outputStream = response.getOutputStream();
+
+        byte[] decodedPicture = Base64Url.decode(imgString);
+        outputStream.write(decodedPicture);
+
+        outputStream.flush();
     }
 
 

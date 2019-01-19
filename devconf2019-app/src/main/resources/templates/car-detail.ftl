@@ -14,5 +14,6 @@
         <h1>Car Detail</h1>
         Car name: ${car.name} <br />
         Car owner: ${car.owner.username} <br />
+        <img width="50%" src="/app/img/${car.id}" />
     </body>
 </html>
