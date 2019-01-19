@@ -15,8 +15,11 @@ import org.keycloak.common.util.Base64Url;
 import org.keycloak.common.util.KeycloakUriBuilder;
 import org.keycloak.constants.ServiceUrlConstants;
 import org.keycloak.quickstarts.devconf2019.app.service.CarsClientService;
+import org.keycloak.quickstarts.devconf2019.app.util.AppTokenUtil;
 import org.keycloak.quickstarts.devconf2019.service.CarRepresentation;
 import org.keycloak.quickstarts.devconf2019.service.InMemoryCarsDB;
+import org.keycloak.quickstarts.devconf2019.util.ServiceTokenUtil;
+import org.keycloak.representations.AccessToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -44,13 +47,27 @@ public class CarsAppController {
     private @Autowired
     HttpServletResponse response;
 
+    // TODO: Obtain through the ApplicationContext?
+    private static final String AUTH_SERVER_URL = "http://localhost:8180/auth";
+
+    private static final String REALM_NAME = "cars";
+
     @RequestMapping(value = "/app", method = RequestMethod.GET)
     public String showCarsPage(Principal principal, Model model) {
         model.addAttribute("cars", carsClientService.getCars());
         model.addAttribute("principal",  principal);
-        String logoutUri = KeycloakUriBuilder.fromUri("http://localhost:8180/auth").path(ServiceUrlConstants.TOKEN_SERVICE_LOGOUT_PATH)
-                .queryParam("redirect_uri", "http://localhost:8080/app").build("cars").toString();
+
+        String logoutUri = KeycloakUriBuilder.fromUri(AUTH_SERVER_URL).path(ServiceUrlConstants.TOKEN_SERVICE_LOGOUT_PATH)
+                .queryParam("redirect_uri", "http://localhost:8080/app").build(REALM_NAME).toString();
         model.addAttribute("logout",  logoutUri);
+
+        String accountUri = KeycloakUriBuilder.fromUri(AUTH_SERVER_URL).path(ServiceUrlConstants.ACCOUNT_SERVICE_PATH)
+                .build(REALM_NAME).toString();
+        model.addAttribute("accountUri", accountUri);
+
+        AccessToken token = AppTokenUtil.getAccessToken(principal);
+        model.addAttribute("token", token);
+
         return "cars";
     }
 

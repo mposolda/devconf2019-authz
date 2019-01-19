@@ -15,7 +15,6 @@
         <springboot-version>2.0.3.RELEASE</springboot-version>
         <httpclient.version>4.5.3</httpclient.version>
         <spring-mvc-cache-control.version>1.1.1-RELEASE</spring-mvc-cache-control.version>
-        <spring-boot-starter-security.version>1.4.2.RELEASE</spring-boot-starter-security.version>
     </properties>
     <dependencyManagement>
         <dependencies>

@@ -6,11 +6,10 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.keycloak.KeycloakPrincipal;
 import org.keycloak.quickstarts.devconf2019.service.CarRepresentation;
 import org.keycloak.quickstarts.devconf2019.service.CarsService;
+import org.keycloak.quickstarts.devconf2019.util.ServiceTokenUtil;
 import org.keycloak.representations.AccessToken;
-import org.keycloak.representations.IDToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -40,7 +39,7 @@ public class CarsServiceController {
     // Create (generate) new car for authenticated user. Then return the newly created car
     @PostMapping(value = "/cars/create", produces = MediaType.APPLICATION_JSON_VALUE)
     public CarRepresentation generateCar(Principal principal) {
-        AccessToken token = getBearerToken(principal);
+        AccessToken token = ServiceTokenUtil.getAccessToken(principal);
         return carsService.generateCarForUser(token.getId(), token.getPreferredUsername());
     }
 
@@ -54,12 +53,6 @@ public class CarsServiceController {
     @DeleteMapping(value = "/cars/delete/{carId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public void deleteCar(Principal principal, @PathVariable String carId) {
         carsService.deleteCarById(carId);
-    }
-
-
-    private AccessToken getBearerToken(Principal principal) {
-        KeycloakPrincipal kcPrincipal = (KeycloakPrincipal) principal;
-        return kcPrincipal.getKeycloakSecurityContext().getToken();
     }
 
 }
