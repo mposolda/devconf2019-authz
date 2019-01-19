@@ -17,6 +17,7 @@ import org.jboss.logging.Logger;
 import org.keycloak.common.util.Base64Url;
 import org.keycloak.common.util.KeycloakUriBuilder;
 import org.keycloak.constants.ServiceUrlConstants;
+import org.keycloak.quickstarts.devconf2019.app.config.AppConfig;
 import org.keycloak.quickstarts.devconf2019.app.service.CarsClientService;
 import org.keycloak.quickstarts.devconf2019.app.util.AppTokenUtil;
 import org.keycloak.quickstarts.devconf2019.service.CarRepresentation;
@@ -57,24 +58,21 @@ public class CarsAppController {
     private @Autowired
     HttpServletResponse response;
 
-    // TODO: Obtain through the ApplicationContext?
-    private static final String AUTH_SERVER_URL = "http://localhost:8180/auth";
+    @Autowired
+    private AppConfig appConfig;
 
-    private static final String REALM_NAME = "cars";
-
-    private static final String CLIENT_ID = "cars-app";
 
     @RequestMapping(value = "/app", method = RequestMethod.GET)
     public String showCarsPage(Principal principal, Model model) {
         model.addAttribute("cars", carsClientService.getCars());
         model.addAttribute("principal",  principal);
 
-        String logoutUri = KeycloakUriBuilder.fromUri(AUTH_SERVER_URL).path(ServiceUrlConstants.TOKEN_SERVICE_LOGOUT_PATH)
-                .queryParam("redirect_uri", "http://localhost:8080/app").build(REALM_NAME).toString();
+        String logoutUri = KeycloakUriBuilder.fromUri(appConfig.getAuthServerUrl()).path(ServiceUrlConstants.TOKEN_SERVICE_LOGOUT_PATH)
+                .queryParam("redirect_uri", "http://localhost:8080/app").build(appConfig.getRealmName()).toString();
         model.addAttribute("logout",  logoutUri);
 
-        String accountUri = KeycloakUriBuilder.fromUri(AUTH_SERVER_URL).path(ServiceUrlConstants.ACCOUNT_SERVICE_PATH)
-                .queryParam("referrer", CLIENT_ID).build(REALM_NAME).toString();
+        String accountUri = KeycloakUriBuilder.fromUri(appConfig.getAuthServerUrl()).path(ServiceUrlConstants.ACCOUNT_SERVICE_PATH)
+                .queryParam("referrer", appConfig.getClientId()).build(appConfig.getRealmName()).toString();
         model.addAttribute("accountUri", accountUri);
 
         AccessToken token = AppTokenUtil.getAccessToken(principal);
