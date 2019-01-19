@@ -57,10 +57,18 @@
                     <div class="message">
                         <table cellpadding="0" cellspacing="0">
                             <#list cars[username] as car>
+                                <#if car?is_even_item>
+                                <tr class="even">
+                                <#else>
                                 <tr>
+                                </#if>
+
+
+
                                     <td class="label">${car.name}</td>
-                                    <td><a href="/app/details/${car.id}">Show Details</a></td>
-                                    <td><a href="/app/delete/${car.id}">Delete</a></td>
+                                    <td class="button"><button onclick="location.href = '/app/details/${car.id}'">Details</button></td>
+                                    <td class="button"><button onclick="location.href = '/app/delete/${car.id}'">Delete</button></td>
+                                    <td></td>
                                 </tr>
                             </#list>
                         </table>
