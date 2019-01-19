@@ -2,15 +2,14 @@
 <#assign xhtmlCompliant = true in spring>
 <!DOCTYPE html>
 <html>
-<head>
-    <title>Landing Page</title>
-</head>
-<body>
+    <head>
+        <title>Landing Page</title>
+    </head>
+    <body>
 
-<header>
-     <a href="/app">cars</a>
-</header>
+    <header>
+        <a href="/app">cars</a>
+    </header>
 
-
-</body>
+    </body>
 </html>

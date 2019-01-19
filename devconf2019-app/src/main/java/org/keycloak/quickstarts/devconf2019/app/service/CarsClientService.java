@@ -29,4 +29,11 @@ public class CarsClientService {
         ResponseEntity<Map> response = template.getForEntity(endpoint, Map.class);
         return response.getBody();
     }
+
+
+    public void createCar() {
+        String createEndpoint = endpoint + "/create";
+        ResponseEntity<CarRepresentation> newCar = template.postForEntity(createEndpoint, null, CarRepresentation.class);
+    }
+
 }

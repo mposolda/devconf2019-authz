@@ -30,7 +30,7 @@ public class CarsAppController {
     HttpServletRequest request;
 
     @RequestMapping(value = "/app", method = RequestMethod.GET)
-    public String handleCustomersRequest(Principal principal, Model model) {
+    public String showCarsPage(Principal principal, Model model) {
         model.addAttribute("cars", carsClientService.getCars());
         model.addAttribute("principal",  principal);
         String logoutUri = KeycloakUriBuilder.fromUri("http://localhost:8180/auth").path(ServiceUrlConstants.TOKEN_SERVICE_LOGOUT_PATH)
@@ -39,11 +39,22 @@ public class CarsAppController {
         return "cars";
     }
 
+
+    @RequestMapping(value = "/app/create-car", method = RequestMethod.GET)
+    public String createRandomCar(Principal principal, Model model) {
+        carsClientService.createCar();
+
+        // Just re-show the page
+        return showCarsPage(principal, model);
+    }
+
+
     @RequestMapping(value = "/logout", method = RequestMethod.GET)
     public String handleLogoutt() throws ServletException {
         request.logout();
         return "landing";
     }
+
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String landing() throws ServletException {

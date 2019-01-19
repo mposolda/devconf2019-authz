@@ -6,11 +6,15 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.keycloak.KeycloakPrincipal;
 import org.keycloak.quickstarts.devconf2019.service.CarRepresentation;
 import org.keycloak.quickstarts.devconf2019.service.CarsService;
+import org.keycloak.representations.AccessToken;
+import org.keycloak.representations.IDToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -28,6 +32,20 @@ public class CarsServiceController {
     @GetMapping(value = "/cars", produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, List<CarRepresentation>> getCars(Principal principal) {
         return carsService.getCars(null);
+    }
+
+
+    // Create (generate) new car for authenticated user. Then return the newly created car
+    @PostMapping(value = "/cars/create", produces = MediaType.APPLICATION_JSON_VALUE)
+    public CarRepresentation generateCar(Principal principal) {
+        AccessToken token = getBearerToken(principal);
+        return carsService.generateCarForUser(token.getId(), token.getPreferredUsername());
+    }
+
+
+    private AccessToken getBearerToken(Principal principal) {
+        KeycloakPrincipal kcPrincipal = (KeycloakPrincipal) principal;
+        return kcPrincipal.getKeycloakSecurityContext().getToken();
     }
 
 }

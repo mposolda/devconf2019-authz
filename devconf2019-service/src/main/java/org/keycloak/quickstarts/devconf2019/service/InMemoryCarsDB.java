@@ -46,12 +46,6 @@ public class InMemoryCarsDB {
             cars.add(new Car("blue_rescue_jeep", "Blue Rescue Jeep", ImgUtil.readImage("IMG_20190118_083831.jpg")));
             cars.add(new Car("black_carabinieri", "Black Carabinieri", ImgUtil.readImage("IMG_20190118_084023.jpg")));
             cars.add(new Car("yellow_truck_deere", "Yellow Truck - Deere", ImgUtil.readImage("IMG_20190118_084119.jpg")));
-
-            // TODO: This is really temporary and should go away once there is proper support for puts
-            cars.get(0).setOwner(new OwnerRepresentation("1", "john"));
-            cars.get(1).setOwner(new OwnerRepresentation("1", "john"));
-            cars.get(2).setOwner(new OwnerRepresentation("2", "mary"));
-
         } catch (IOException ioe) {
             throw new RuntimeException("Error when initializing cars", ioe);
         }

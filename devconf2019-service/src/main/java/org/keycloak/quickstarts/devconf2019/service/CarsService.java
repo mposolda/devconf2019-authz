@@ -17,10 +17,9 @@ public class CarsService {
     @Autowired
     private InMemoryCarsDB db;
 
-    public void generateCarForUser(String userId, String username) {
+    public CarRepresentation generateCarForUser(String userId, String username) {
         InMemoryCarsDB.Car car = db.giveRandomCarToUser(userId, username);
-
-        // TODO: check what needs to be done here...
+        return new CarRepresentation(car.getName(), car.getDescription(), null, car.getOwner());
     }
 
 
