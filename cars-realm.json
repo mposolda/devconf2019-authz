@@ -112,14 +112,15 @@
       "enabled": true,
       "adminUrl": "http://localhost:8080/app",
       "baseUrl": "http://localhost:8080/app",
-      "publicClient": true,
+      "publicClient": false,
       "consentRequired" : true,
       "fullScopeAllowed" : true,
       "redirectUris": [
         "http://localhost:8080/app/*",
         "http://localhost:8080/sso/login/*"
       ],
-      "webOrigins": ["http://localhost:8080"]
+      "webOrigins": ["http://localhost:8080"],
+      "secret": "password"
     },
     {
       "clientId": "cars-service",
