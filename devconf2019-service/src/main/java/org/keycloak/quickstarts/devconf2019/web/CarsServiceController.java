@@ -32,7 +32,14 @@ public class CarsServiceController {
 
     @GetMapping(value = "/cars", produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, List<CarRepresentation>> getCars(Principal principal) {
-        return carsService.getCars(null);
+        AccessToken accessToken = ServiceTokenUtil.getAccessToken(principal);
+
+        // This is temporary...
+        if (accessToken.getRealmAccess().isUserInRole("admin")) {
+            return carsService.getCars(null);
+        } else {
+            return carsService.getCars(accessToken.getPreferredUsername());
+        }
     }
 
 

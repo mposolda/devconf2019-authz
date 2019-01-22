@@ -1,14 +1,18 @@
 package org.keycloak.quickstarts.devconf2019.service;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.jboss.logging.Logger;
 import org.keycloak.KeycloakSecurityContext;
 import org.keycloak.authorization.client.AuthzClient;
 import org.keycloak.authorization.client.ClientAuthorizationContext;
 import org.keycloak.authorization.client.resource.ProtectionResource;
+import org.keycloak.representations.idm.authorization.PermissionTicketRepresentation;
 import org.keycloak.representations.idm.authorization.ResourceOwnerRepresentation;
 import org.keycloak.representations.idm.authorization.ResourceRepresentation;
 import org.keycloak.representations.idm.authorization.ScopeRepresentation;
@@ -20,6 +24,8 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class CarsAuthzService {
+
+    private static final Logger log = Logger.getLogger(CarsAuthzService.class);
 
     static final String SCOPE_CREATE = "car:create";
     static final String SCOPE_VIEW = "car:view";
@@ -70,6 +76,13 @@ public class CarsAuthzService {
             throw new RuntimeException("Could not search protected resource.", e);
         }
     }
+
+
+    public List<PermissionTicketRepresentation> getCarsPermissions() {
+        return getAuthzClient().protection().permission()
+                .find(null, null, null, getKeycloakSecurityContext().getToken().getSubject(), true, true, null, null);
+    }
+
 
 
     private AuthzClient getAuthzClient() {

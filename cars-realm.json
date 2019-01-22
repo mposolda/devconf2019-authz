@@ -70,7 +70,7 @@
         }
       ],
       "realmRoles": [
-        "admin", "uma_authorization"
+        "admin", "user", "uma_authorization"
       ],
       "clientRoles": {
         "realm-management": [
@@ -158,25 +158,16 @@
         "resources": [
           {
             "name": "Car Resource",
-            "type": "http://cars.com/car",
+            "type": "http://cars.com/cars",
             "ownerManagedAccess": false,
             "attributes": {},
             "_id": "df7b5796-069d-4607-b3e1-658443fd7481",
             "uris": [
-              "/cars/*"
+              "/cars/create"
             ],
             "scopes": [
               {
-                "name": "car:view-detail"
-              },
-              {
                 "name": "car:create"
-              },
-              {
-                "name": "car:delete"
-              },
-              {
-                "name": "car:view"
               }
             ]
           }
@@ -256,7 +247,6 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "resources": "[\"Car Resource\"]",
               "scopes": "[\"car:view\",\"car:view-detail\",\"car:delete\"]",
               "applyPolicies": "[\"Only Owner and Administrators Policy\"]"
             }

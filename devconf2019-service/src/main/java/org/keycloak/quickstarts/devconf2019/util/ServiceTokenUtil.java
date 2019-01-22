@@ -15,4 +15,9 @@ public class ServiceTokenUtil {
         KeycloakPrincipal kcPrincipal = (KeycloakPrincipal) principal;
         return kcPrincipal.getKeycloakSecurityContext().getToken();
     }
+
+    public static String getAccessTokenString(Principal principal) {
+        KeycloakPrincipal kcPrincipal = (KeycloakPrincipal) principal;
+        return kcPrincipal.getKeycloakSecurityContext().getTokenString();
+    }
 }

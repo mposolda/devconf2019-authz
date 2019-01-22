@@ -1,5 +1,8 @@
 package org.keycloak.quickstarts.devconf2019.service;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
@@ -29,7 +32,7 @@ public class CarRepresentation {
 
     private String externalId;
 
-    // TODO: resourceId?
+    private Set<String> scopes;
 
 
     public String getId() {
@@ -77,4 +80,18 @@ public class CarRepresentation {
         return base64Img != null;
     }
 
+    public void addScope(String scope) {
+        if (scopes == null) {
+            scopes = new HashSet<>();
+        }
+        this.scopes.add(scope);
+    }
+
+    public Set<String> getScopes() {
+        return scopes;
+    }
+
+    public void setScopes(Set<String> scopes) {
+        this.scopes = scopes;
+    }
 }
