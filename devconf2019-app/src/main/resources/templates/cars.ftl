@@ -16,8 +16,11 @@
             </#if>
 
             <div class="menu">
-                <button name="carBtn" onclick="location.href = '/app/create-car'">Buy New Car</button>
+                <#if create_car_allowed == true>
+                    <button name="carBtn" onclick="location.href = '/app/create-car'">Buy New Car</button>
+                </#if>
                 <button name="tokenBtn" onclick="location.href = '/app/show-token'">Token</button>
+                <button name="rptBtn" onclick="location.href = '/app/show-rpt'">RPT</button>
                 <button name="accountBtn" onclick="location.href = '${accountUri}'" type="button">Account</button>
                 <button name="logoutBtn" onclick="location.href = '/logout'" type="button">Logout</button>
             </div>
@@ -62,9 +65,6 @@
                                 <#else>
                                 <tr>
                                 </#if>
-
-
-
                                     <td class="label">${car.name}</td>
                                     <td class="button"><button onclick="location.href = '/app/details/${car.id}'">Details</button></td>
                                     <td class="button"><button onclick="location.href = '/app/delete/${car.id}'">Delete</button></td>

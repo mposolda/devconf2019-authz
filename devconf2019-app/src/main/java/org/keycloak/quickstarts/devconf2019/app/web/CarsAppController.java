@@ -14,10 +14,13 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import net.rossillo.spring.web.mvc.CacheControl;
 import net.rossillo.spring.web.mvc.CachePolicy;
 import org.jboss.logging.Logger;
+import org.keycloak.KeycloakSecurityContext;
 import org.keycloak.common.util.Base64Url;
 import org.keycloak.common.util.KeycloakUriBuilder;
 import org.keycloak.constants.ServiceUrlConstants;
 import org.keycloak.quickstarts.devconf2019.app.config.AppConfig;
+import org.keycloak.quickstarts.devconf2019.app.config.AuthzClientRequestFactory;
+import org.keycloak.quickstarts.devconf2019.app.config.RptStore;
 import org.keycloak.quickstarts.devconf2019.app.service.CarsClientService;
 import org.keycloak.quickstarts.devconf2019.app.util.AppTokenUtil;
 import org.keycloak.quickstarts.devconf2019.service.CarRepresentation;
@@ -42,8 +45,7 @@ public class CarsAppController {
     private static final Logger log = Logger.getLogger(InMemoryCarsDB.class);
 
 
-    private static final ObjectMapper mapper = new ObjectMapper();
-
+    public static final ObjectMapper mapper = new ObjectMapper();
     static {
         mapper.enable(SerializationFeature.INDENT_OUTPUT);
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
@@ -61,9 +63,15 @@ public class CarsAppController {
     @Autowired
     private AppConfig appConfig;
 
+    @Autowired
+    private RptStore rptStore;
+
 
     @RequestMapping(value = "/app", method = RequestMethod.GET)
     public String showCarsPage(Principal principal, Model model) {
+        boolean isCreateCarAllowed = carsClientService.isCreateCarAllowed(principal);
+        model.addAttribute("create_car_allowed", isCreateCarAllowed);
+
         model.addAttribute("cars", carsClientService.getCars());
         model.addAttribute("principal",  principal);
 
@@ -80,6 +88,9 @@ public class CarsAppController {
 
         return "cars";
     }
+
+
+
 
 
     @RequestMapping(value = "/app/create-car", method = RequestMethod.GET)
@@ -136,6 +147,20 @@ public class CarsAppController {
         model.addAttribute("token", token);
 
         String tokenString = mapper.writeValueAsString(token);
+        model.addAttribute("tokenString", tokenString);
+
+        return "token";
+    }
+
+
+    @RequestMapping(value = "/app/show-rpt", method = RequestMethod.GET)
+    public String showRpt(Principal principal, Model model) throws ServletException, IOException {
+        KeycloakSecurityContext securityCtx = AppTokenUtil.getKeycloakSecurityContext(principal);
+        AccessToken rptToken = rptStore.getParsedRpt(securityCtx);
+
+        model.addAttribute("token", rptToken);
+
+        String tokenString = mapper.writeValueAsString(rptToken);
         model.addAttribute("tokenString", tokenString);
 
         return "token";

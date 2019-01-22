@@ -85,6 +85,27 @@
       }
     },
     {
+      "username": "peter",
+      "enabled": true,
+      "email": "peter@keycloak.org",
+      "firstName": "Peter",
+      "lastName": "Pan",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "peter"
+        }
+      ],
+      "realmRoles": [
+        "user", "uma_authorization"
+      ],
+      "clientRoles": {
+        "account": [
+          "manage-account"
+        ]
+      }
+    },
+    {
       "username": "service-account-cars-service",
       "enabled": true,
       "email": "service-account-cars-service@placeholder.org",

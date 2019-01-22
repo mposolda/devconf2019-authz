@@ -42,12 +42,17 @@ public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
 
 
     @Autowired
-    public KeycloakClientRequestFactory keycloakClientRequestFactory;
+    public AuthzClientRequestFactory keycloakClientRequestFactory;
+
+    @Autowired
+    public RptStore rptStore;
 
     @Bean
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public KeycloakRestTemplate keycloakRestTemplate() {
-        return new KeycloakRestTemplate(keycloakClientRequestFactory);
+        KeycloakRestTemplate restTemplate = new KeycloakRestTemplate(keycloakClientRequestFactory);
+        restTemplate.setErrorHandler(new UMAErrorHandler(keycloakClientRequestFactory, rptStore));
+        return restTemplate;
     }
 
     @Bean
