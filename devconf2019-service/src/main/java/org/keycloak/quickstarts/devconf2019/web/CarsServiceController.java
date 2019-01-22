@@ -40,7 +40,7 @@ public class CarsServiceController {
     @PostMapping(value = "/cars/create", produces = MediaType.APPLICATION_JSON_VALUE)
     public CarRepresentation generateCar(Principal principal) {
         AccessToken token = ServiceTokenUtil.getAccessToken(principal);
-        return carsService.generateCarForUser(token.getId(), token.getPreferredUsername());
+        return carsService.generateCarForUser(token.getSubject(), token.getPreferredUsername());
     }
 
 

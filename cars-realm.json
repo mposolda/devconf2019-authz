@@ -127,26 +127,30 @@
       "secret": "secret",
       "enabled": true,
       "baseUrl": "http://localhost:8081/cars",
+      "redirectUris": [
+        "http://localhost:8080/app"
+      ],
       "authorizationServicesEnabled" : true,
       "authorizationSettings": {
         "allowRemoteResourceManagement": true,
         "policyEnforcementMode": "ENFORCING",
         "resources": [
           {
-            "name": "Admin Resources",
-            "uri": "/admin/*",
-            "type": "http://cars.com/admin",
+            "name": "Car Resource",
+            "type": "http://cars.com/car",
+            "ownerManagedAccess": false,
+            "attributes": {},
+            "_id": "df7b5796-069d-4607-b3e1-658443fd7481",
+            "uris": [
+              "/cars/*"
+            ],
             "scopes": [
               {
-                "name": "admin:manage"
-              }
-            ]
-          },
-          {
-            "name": "Car Resource",
-            "uri": "/car/*",
-            "type": "http://cars.com/car",
-            "scopes": [
+                "name": "car:view-detail"
+              },
+              {
+                "name": "car:create"
+              },
               {
                 "name": "car:delete"
               },
@@ -158,46 +162,7 @@
         ],
         "policies": [
           {
-            "name": "Only Owner and Administrators Policy",
-            "description": "Defines that only the resource owner and administrators can do something",
-            "type": "aggregate",
-            "logic": "POSITIVE",
-            "decisionStrategy": "AFFIRMATIVE",
-            "config": {
-              "applyPolicies": "[\"Administration Policy\",\"Only Owner Policy\"]"
-            }
-          },
-          {
-            "name": "Administration Policy",
-            "description": "Defines that only administrators from a specific network address can do something.",
-            "type": "aggregate",
-            "logic": "POSITIVE",
-            "decisionStrategy": "UNANIMOUS",
-            "config": {
-              "applyPolicies": "[\"Any Admin Policy\",\"Only From a Specific Client Address\"]"
-            }
-          },
-          {
-            "name": "Only From @keycloak.org or Admin",
-            "description": "Defines that only users from @keycloak.org",
-            "type": "js",
-            "logic": "POSITIVE",
-            "decisionStrategy": "UNANIMOUS",
-            "config": {
-              "code": "var context = $evaluation.getContext();\nvar identity = context.getIdentity();\nvar attributes = identity.getAttributes();\nvar email = attributes.getValue('email').asString(0);\n\nif (identity.hasRealmRole('admin') || email.endsWith('@keycloak.org')) {\n    $evaluation.grant();\n}"
-            }
-          },
-          {
-            "name": "Only Owner Policy",
-            "description": "Defines that only the resource owner is allowed to do something",
-            "type": "js",
-            "logic": "POSITIVE",
-            "decisionStrategy": "UNANIMOUS",
-            "config": {
-              "code": "var permission = $evaluation.getPermission();\nvar identity = $evaluation.getContext().getIdentity();\nvar resource = permission.getResource();\nif (resource) {\nif (resource.getOwner().equals(identity.getId())) {\n$evaluation.grant();\n}}"
-            }
-          },
-          {
+            "id": "31f958c1-e64a-4fee-90fb-c32a8f964e80",
             "name": "Any Admin Policy",
             "description": "Defines that adminsitrators can do something",
             "type": "role",
@@ -208,6 +173,7 @@
             }
           },
           {
+            "id": "ae5e8e31-81a9-4f13-9227-17c639a7ec21",
             "name": "Only From a Specific Client Address",
             "description": "Defines that only clients from a specific address can do something",
             "type": "js",
@@ -218,6 +184,40 @@
             }
           },
           {
+            "id": "0963d592-1430-4b0b-ac4e-25b68bf39c60",
+            "name": "Administration Policy",
+            "description": "Defines that only administrators from a specific network address can do something.",
+            "type": "aggregate",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "applyPolicies": "[\"Any Admin Policy\",\"Only From a Specific Client Address\"]"
+            }
+          },
+          {
+            "id": "7546da6d-c0dd-4f7c-897e-1dafbbf52fb5",
+            "name": "Only Owner Policy",
+            "description": "Defines that only the resource owner is allowed to do something",
+            "type": "js",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "code": "var permission = $evaluation.getPermission();\nvar identity = $evaluation.getContext().getIdentity();\nvar resource = permission.getResource();\nif (resource) {\nif (resource.getOwner().equals(identity.getId())) {\n$evaluation.grant();\n}}"
+            }
+          },
+          {
+            "id": "7f957056-cfea-4fcd-8f07-936545febcb5",
+            "name": "Only Owner and Administrators Policy",
+            "description": "Defines that only the resource owner and administrators can do something",
+            "type": "aggregate",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "applyPolicies": "[\"Administration Policy\",\"Only Owner Policy\"]"
+            }
+          },
+          {
+            "id": "f27b71d4-6a91-4dc2-b280-1eadf2c23e65",
             "name": "Any User Policy",
             "description": "Defines that only users from well known clients are allowed to access",
             "type": "role",
@@ -228,18 +228,7 @@
             }
           },
           {
-            "name": "Admin Resource Permission",
-            "description": "General policy for any administrative resource.",
-            "type": "resource",
-            "logic": "POSITIVE",
-            "decisionStrategy": "UNANIMOUS",
-            "config": {
-              "defaultResourceType": "http://cars.com/admin",
-              "applyPolicies": "[\"Administration Policy\"]",
-              "default": "true"
-            }
-          },
-          {
+            "id": "b33c5e39-d10f-4abe-8fe3-80b4aa860fec",
             "name": "Car Resource Permission",
             "description": "A default permission that defines access for any car resource",
             "type": "scope",
@@ -247,9 +236,40 @@
             "decisionStrategy": "UNANIMOUS",
             "config": {
               "resources": "[\"Car Resource\"]",
-              "scopes": "[\"car:view\",\"car:delete\"]",
+              "scopes": "[\"car:view\",\"car:view-detail\",\"car:delete\"]",
               "applyPolicies": "[\"Only Owner and Administrators Policy\"]"
             }
+          },
+          {
+            "id": "ec23e0b7-06fa-4346-bcab-aaa4ba2773fa",
+            "name": "Car create permission",
+            "description": "Permission for creating new car",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "resources": "[\"Car Resource\"]",
+              "scopes": "[\"car:create\"]",
+              "applyPolicies": "[\"Any User Policy\"]"
+            }
+          }
+        ],
+        "scopes": [
+          {
+            "id": "aa127425-6b7d-4d45-ad67-3b0bbd0fa992",
+            "name": "car:delete"
+          },
+          {
+            "id": "b1e68b16-386a-4fd9-9f9b-10251b1e75a3",
+            "name": "car:view"
+          },
+          {
+            "id": "3156ff9e-7391-4e1d-8a07-641a08ae7d77",
+            "name": "car:create"
+          },
+          {
+            "id": "75613b0a-07eb-4cf3-aa88-5fc1fd2c4294",
+            "name": "car:view-detail"
           }
         ]
       }

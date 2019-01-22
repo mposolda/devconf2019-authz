@@ -80,14 +80,17 @@ public class InMemoryCarsDB {
     }
 
 
-    public void deleteCarById(String carId) {
+    public Car deleteCarById(String carId) {
         // TODO: Better handle case when car doesn't exists...
         Car car = getCarById(carId);
 
         // This means just deleting owner
         synchronized(lock) {
             car.setOwner(null);
+            car.setExternalId(null);
         }
+
+        return car;
     }
 
 
@@ -106,6 +109,7 @@ public class InMemoryCarsDB {
 
         // Null when car is still "free". It is not very nice to track both ID and username here, but should be fine for the example purpose
         private OwnerRepresentation owner;
+        private String externalId;
 
         public Car(String id, String name, String base64Img) {
             this.id = id;
@@ -132,6 +136,14 @@ public class InMemoryCarsDB {
 
         public void setOwner(OwnerRepresentation owner) {
             this.owner = owner;
+        }
+
+        public String getExternalId() {
+            return externalId;
+        }
+
+        public void setExternalId(String externalId) {
+            this.externalId = externalId;
         }
     }
 }

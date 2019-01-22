@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
+ * Service, which among other things, also do authz integration (CRUD resources and permissions etc)
+ *
  * @author <a href="mailto:mposolda@redhat.com">Marek Posolda</a>
  */
 @Component
@@ -17,9 +19,17 @@ public class CarsService {
     @Autowired
     private InMemoryCarsDB db;
 
+    @Autowired
+    private CarsAuthzService carsAuthzService;
+
     public CarRepresentation generateCarForUser(String userId, String username) {
+        // Create in DB
         InMemoryCarsDB.Car car = db.giveRandomCarToUser(userId, username);
-        return new CarRepresentation(car.getId(), car.getName(), null, car.getOwner());
+
+        // Create authz resource
+        carsAuthzService.createProtectedResource(car);
+
+        return new CarRepresentation(car.getId(), car.getName(), null, car.getExternalId(), car.getOwner());
     }
 
 
@@ -36,7 +46,7 @@ public class CarsService {
             }
 
             carsRep.get(ownerUsername).add(new CarRepresentation(car.getId(), car.getName(), null,
-                    car.getOwner()));
+                    car.getExternalId(), car.getOwner()));
         });
 
         return carsRep;
@@ -45,12 +55,15 @@ public class CarsService {
 
     public CarRepresentation getCarById(String carId) {
         InMemoryCarsDB.Car car = db.getCarById(carId);
-        return new CarRepresentation(car.getId(), car.getName(), car.getBase64Img(), car.getOwner());
+        return new CarRepresentation(car.getId(), car.getName(), car.getBase64Img(), car.getExternalId(), car.getOwner());
     }
 
 
     public void deleteCarById(String carId) {
-        db.deleteCarById(carId);
+        InMemoryCarsDB.Car car = db.deleteCarById(carId);
+
+        // Delete authz resource
+        carsAuthzService.deleteProtectedResource(car);
     }
 
 }
