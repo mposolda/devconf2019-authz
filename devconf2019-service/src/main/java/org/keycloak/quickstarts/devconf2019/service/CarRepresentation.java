@@ -94,4 +94,16 @@ public class CarRepresentation {
     public void setScopes(Set<String> scopes) {
         this.scopes = scopes;
     }
+
+    public boolean hasScope(String scope) {
+        return (scopes != null && scopes.contains(scope));
+    }
+
+    public boolean isHasViewDetailsScope() {
+        return hasScope(CarsAuthzService.SCOPE_VIEW_DETAIL);
+    }
+
+    public boolean isHasDeleteScope() {
+        return hasScope(CarsAuthzService.SCOPE_DELETE);
+    }
 }

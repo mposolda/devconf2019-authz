@@ -65,9 +65,18 @@
                                 <#else>
                                 <tr>
                                 </#if>
+
                                     <td class="label">${car.name}</td>
-                                    <td class="button"><button onclick="location.href = '/app/details/${car.id}'">Details</button></td>
-                                    <td class="button"><button onclick="location.href = '/app/delete/${car.id}'">Delete</button></td>
+                                    <#if car.hasViewDetailsScope>
+                                        <td class="button"><button onclick="location.href = '/app/details/${car.id}'">Details</button></td>
+                                    <#else>
+                                        <td class="button"><button onclick="location.href = '/app/details/${car.id}'">Ask for details</button></td>
+                                    </#if>
+                                    <#if car.hasDeleteScope>
+                                        <td class="button"><button onclick="location.href = '/app/delete/${car.id}'">Delete</button></td>
+                                    <#else>
+                                        <td class="button"><button onclick="location.href = '/app/delete/${car.id}'">Ask for delete</button></td>
+                                    </#if>
                                     <td></td>
                                 </tr>
                             </#list>

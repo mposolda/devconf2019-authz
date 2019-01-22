@@ -2,6 +2,8 @@ package org.keycloak.quickstarts.devconf2019.app.web;
 
 import java.io.IOException;
 import java.security.Principal;
+import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
@@ -72,7 +74,8 @@ public class CarsAppController {
         boolean isCreateCarAllowed = carsClientService.isCreateCarAllowed(principal);
         model.addAttribute("create_car_allowed", isCreateCarAllowed);
 
-        model.addAttribute("cars", carsClientService.getCars());
+        Map<String, List<CarRepresentation>> cars = carsClientService.getCars();
+        model.addAttribute("cars", cars);
         model.addAttribute("principal",  principal);
 
         String logoutUri = KeycloakUriBuilder.fromUri(appConfig.getAuthServerUrl()).path(ServiceUrlConstants.TOKEN_SERVICE_LOGOUT_PATH)
