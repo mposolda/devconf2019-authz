@@ -35,15 +35,26 @@ public class AuthzClientRequestFactory extends KeycloakClientRequestFactory {
     @Autowired
     public RptStore rptStore;
 
+    @Autowired
+    public HttpServletRequest servletRequest;
+
     @Override
     protected void postProcessHttpRequest(HttpUriRequest request) {
         KeycloakSecurityContext context = this.getKeycloakSecurityContext();
 
-        // TODO
+        // TODO: Ideally should do it all automatically by some provided adapter/utility
         String currentRpt = rptStore.getRpt(context);
         if (currentRpt == null) {
             // Fallback to access token
             currentRpt = context.getTokenString();
+        } else {
+            AccessToken parsedRpt = rptStore.getParsedRpt(context);
+            if (!parsedRpt.isActive(10)) {
+                // Just delete RPT and use accessToken instead. TODO: Will be good to have some "built-in" way to refresh RPT for clients
+                log.info("Deleting expired RPT. Will need to obtain new when needed");
+                rptStore.deleteCurrentRpt(servletRequest);
+                currentRpt = context.getTokenString();
+            }
         }
 
         request.setHeader(AUTHORIZATION_HEADER, "Bearer " + currentRpt);

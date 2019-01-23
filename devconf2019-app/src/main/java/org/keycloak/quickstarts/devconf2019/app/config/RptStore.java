@@ -80,6 +80,11 @@ public class RptStore {
     }
 
 
+    public void deleteCurrentRpt(HttpServletRequest request) {
+        request.getSession().removeAttribute("rpt");
+    }
+
+
     private RptInfoResponse sendRptRequest(RptInfo oldRptInfo, String tokenString, String umaTicket) {
         AuthorizationRequest authzReq = new AuthorizationRequest();
 
@@ -88,9 +93,10 @@ public class RptStore {
         }
         if (umaTicket != null) {
             authzReq.setTicket(umaTicket);
+            log.infof("Sending request to exchange UMA ticket for RPT. Uma ticket is: %s", umaTicket);
+        } else {
+            log.infof("Sending request to refresh RPT");
         }
-
-        log.infof("Sending request to exchange UMA ticket for RPT. Uma ticket is: %s", umaTicket);
 
         AuthzClient authzClient = getAuthzClient();
         try {
