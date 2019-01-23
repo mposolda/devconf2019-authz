@@ -1,5 +1,6 @@
 package org.keycloak.quickstarts.devconf2019.app.config;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -14,6 +15,7 @@ import org.keycloak.authorization.client.Configuration;
 import org.keycloak.authorization.client.util.HttpResponseException;
 import org.keycloak.jose.jws.JWSInput;
 import org.keycloak.jose.jws.JWSInputException;
+import org.keycloak.quickstarts.devconf2019.app.service.ObjectMapperProvider;
 import org.keycloak.representations.AccessToken;
 import org.keycloak.representations.idm.authorization.AuthorizationRequest;
 import org.keycloak.representations.idm.authorization.AuthorizationResponse;
@@ -32,8 +34,11 @@ public class RptStore {
     // Will be better to have separate factory service...
     private AuthzClient authzClient;
 
-    private @Autowired
-    HttpServletRequest request;
+    @Autowired
+    private HttpServletRequest request;
+
+    @Autowired
+    private ObjectMapperProvider mapperProvider;
 
 
     // Can return null. Use accessToken in that case
@@ -49,12 +54,23 @@ public class RptStore {
     }
 
 
-    public void sendRptRequest(String umaTicket, KeycloakSecurityContext ctx) {
+    /**
+     * Can throw HandledException in case that request was successfully submitted through the UMA. We don't need to retry re-sending UMA ticket
+     * in this case
+     *
+     * @param umaTicket
+     * @param ctx
+     */
+    public void sendRptRequest(String umaTicket, KeycloakSecurityContext ctx) throws UMAErrorHandler.HandledException {
         RptInfo currentRpt = getCurrentRpt(request, ctx);
-        RptInfo rptInfo = sendRptRequest(currentRpt, ctx.getTokenString(), umaTicket);
+        RptInfoResponse rptInfoResponse = sendRptRequest(currentRpt, ctx.getTokenString(), umaTicket);
 
         // Save as session attribute now
-        request.getSession().setAttribute("rpt", rptInfo);
+        if (rptInfoResponse.getRptInfo() != null) {
+            request.getSession().setAttribute("rpt", rptInfoResponse.getRptInfo());
+        } else {
+            throw new UMAErrorHandler.HandledException(true);
+        }
     }
 
 
@@ -64,7 +80,7 @@ public class RptStore {
     }
 
 
-    private RptInfo sendRptRequest(RptInfo oldRptInfo, String tokenString, String umaTicket) {
+    private RptInfoResponse sendRptRequest(RptInfo oldRptInfo, String tokenString, String umaTicket) {
         AuthorizationRequest authzReq = new AuthorizationRequest();
 
         if (oldRptInfo != null) {
@@ -84,13 +100,28 @@ public class RptStore {
 
             try {
                 AccessToken parsedRpt = new JWSInput(rpt).readJsonContent(AccessToken.class);
-                return new RptInfo(rpt, parsedRpt);
+                RptInfo newRptInfo = new RptInfo(rpt, parsedRpt);
+                return new RptInfoResponse(newRptInfo, false);
             } catch (JWSInputException ioe) {
                 throw new RuntimeException(ioe);
             }
         } catch (AuthorizationDeniedException ex) {
+            if (ex.getMessage().contains("{")) {
+                String json = ex.getMessage().substring(ex.getMessage().indexOf("{"));
+                try {
+                    Map map = mapperProvider.getMapper().readValue(json, Map.class);
+                    String errorDesc = (String) map.get("error_description");
+                    if (errorDesc != null && errorDesc.equals("request_submitted")) {
+                        log.info("UMA request submitted to the resource owner. Need to wait for the approval");
+                        return new RptInfoResponse(null, true);
+                    }
+                } catch (IOException ioe) {
+                    log.error("Unexpected ioe", ioe);
+                }
+            }
+
             log.errorf(ex, "Failed to obtain permissions for ticket: %s", umaTicket);
-            return oldRptInfo;
+            return new RptInfoResponse(null, false);
         }
     }
 
@@ -165,5 +196,24 @@ public class RptStore {
     }
 
 
+    static class RptInfoResponse {
+
+        private final RptInfo rptInfo;
+        private final boolean requestSubmitted;
+
+        public RptInfoResponse(RptInfo rptInfo, boolean requestSubmitted) {
+            this.rptInfo = rptInfo;
+            this.requestSubmitted = requestSubmitted;
+        }
+
+
+        public RptInfo getRptInfo() {
+            return rptInfo;
+        }
+
+        public boolean isRequestSubmitted() {
+            return requestSubmitted;
+        }
+    }
 
 }

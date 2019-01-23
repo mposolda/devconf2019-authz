@@ -43,9 +43,10 @@ public class CarsClientService {
     // A bit of workaround. As we want to see if the "Create car" button should be displayed or not, we need to to obtain RPT first
     public boolean isCreateCarAllowed(Principal principal) {
         AccessToken rpt = rptStore.getParsedRpt(AppTokenUtil.getKeycloakSecurityContext(principal));
+
         // TODO: improve?
         if (rpt == null || !rptStore.hasPermission(rpt, "Car Resource", "car:create")) {
-            log.info("Obtainin initial RPT");
+            log.info("Retrieving the UMA ticket to see if user can create car");
             try {
                 createCarUnchecked();
             } catch (UMAErrorHandler.HandledException he) {
@@ -53,7 +54,6 @@ public class CarsClientService {
             }
 
             rpt = rptStore.getParsedRpt(AppTokenUtil.getKeycloakSecurityContext(principal));
-            // TODO: Probably other exception is here in case that I am not allowed to create a car?
         }
 
         return rptStore.hasPermission(rpt, "Car Resource", "car:create");
@@ -67,11 +67,18 @@ public class CarsClientService {
 
 
     public CarRepresentation createCar() {
-        return Retry.callWithRetry(() -> {
+        ClientCallResponse<CarRepresentation> response = Retry.callWithRetry(() -> {
 
             return createCarUnchecked();
 
         }, template);
+
+        if (response.getResult() != null) {
+            return response.getResult();
+        } else {
+            // Should be handled by UI
+            throw new RuntimeException("Failed to create car");
+        }
     }
 
 
@@ -82,27 +89,42 @@ public class CarsClientService {
     }
 
 
-    public CarRepresentation getCarWithDetails(String carId) {
-        String detailsEndpoint = endpoint + "/details/" + carId;
-        ResponseEntity<CarRepresentation> newCar = template.getForEntity(detailsEndpoint, CarRepresentation.class);
-        return newCar.getBody();
+    public ClientCallResponse<CarRepresentation> getCarWithDetails(String carId) {
+        return Retry.callWithRetry(() -> {
+
+            String detailsEndpoint = endpoint + "/" + carId;
+            ResponseEntity<CarRepresentation> newCar = template.getForEntity(detailsEndpoint, CarRepresentation.class);
+            return newCar.getBody();
+
+        }, template);
     }
 
 
-    public void deleteCar(String carId) {
-        String deleteEndpoint = endpoint + "/delete/" + carId;
-        template.delete(deleteEndpoint);
+    public ClientCallResponse<Void> deleteCar(String carId) {
+        return Retry.callWithRetry(() -> {
+
+            String deleteEndpoint = endpoint + "/" + carId;
+            template.delete(deleteEndpoint);
+            return null;
+
+        }, template);
     }
 
 
     public static class Retry {
 
-        public static <V> V callWithRetry(Callable<V> callable, KeycloakRestTemplate template) {
+        public static <V> ClientCallResponse<V> callWithRetry(Callable<V> callable, KeycloakRestTemplate template) {
             int remaining = 2;
             while (remaining > 0) {
                 try {
-                    return callable.call();
+                    V result = callable.call();
+                    return new ClientCallResponse<>(result, false);
                 } catch (UMAErrorHandler.HandledException ex) {
+                    // Check if request was submitted through UMA. In that case, no need to retry as we need to wait until the originator approves it
+                    if (ex.isRequestSubmitted()) {
+                        return new ClientCallResponse<>(null, true);
+                    }
+
                     // retry the call if possible
                     if (remaining > 0) {
                         log.infof("Retrying operation. Remaining retries: %d", remaining);
@@ -127,6 +149,27 @@ public class CarsClientService {
             return null;
         }
 
+    }
+
+
+    public static class ClientCallResponse<V> {
+
+        private final V result;
+        private final boolean requestSubmitted;
+
+        public ClientCallResponse(V result, boolean requestSubmitted) {
+            this.result = result;
+            this.requestSubmitted = requestSubmitted;
+        }
+
+
+        public V getResult() {
+            return result;
+        }
+
+        public boolean isRequestSubmitted() {
+            return requestSubmitted;
+        }
     }
 
 }

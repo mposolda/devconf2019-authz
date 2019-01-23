@@ -1,9 +1,7 @@
 package org.keycloak.quickstarts.devconf2019.service;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 

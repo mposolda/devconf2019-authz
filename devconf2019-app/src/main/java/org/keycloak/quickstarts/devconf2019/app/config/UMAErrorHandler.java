@@ -60,13 +60,25 @@ public class UMAErrorHandler extends DefaultResponseErrorHandler {
     public static class HandledException extends RuntimeException {
 
         private final ClientHttpResponse response;
+        private final boolean requestSubmitted;
 
         public HandledException(ClientHttpResponse response) {
             this.response = response;
+            this.requestSubmitted = false;
+        }
+
+        public HandledException(boolean requestSubmitted) {
+            this.response = null;
+            this.requestSubmitted = true;
+
         }
 
         public ClientHttpResponse getResponse() {
             return response;
+        }
+
+        public boolean isRequestSubmitted() {
+            return requestSubmitted;
         }
     }
 }

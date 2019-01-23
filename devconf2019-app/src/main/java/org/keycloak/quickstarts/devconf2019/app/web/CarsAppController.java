@@ -24,6 +24,7 @@ import org.keycloak.quickstarts.devconf2019.app.config.AppConfig;
 import org.keycloak.quickstarts.devconf2019.app.config.AuthzClientRequestFactory;
 import org.keycloak.quickstarts.devconf2019.app.config.RptStore;
 import org.keycloak.quickstarts.devconf2019.app.service.CarsClientService;
+import org.keycloak.quickstarts.devconf2019.app.service.ObjectMapperProvider;
 import org.keycloak.quickstarts.devconf2019.app.util.AppTokenUtil;
 import org.keycloak.quickstarts.devconf2019.service.CarRepresentation;
 import org.keycloak.quickstarts.devconf2019.service.InMemoryCarsDB;
@@ -46,12 +47,8 @@ public class CarsAppController {
 
     private static final Logger log = Logger.getLogger(InMemoryCarsDB.class);
 
-
-    public static final ObjectMapper mapper = new ObjectMapper();
-    static {
-        mapper.enable(SerializationFeature.INDENT_OUTPUT);
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-    }
+    @Autowired
+    private ObjectMapperProvider mapperProvider;
 
     @Autowired
     private CarsClientService carsClientService;
@@ -101,7 +98,7 @@ public class CarsAppController {
         try {
             CarRepresentation newCar = carsClientService.createCar();
             log.infof("Created new car %s for user %s", newCar.getId(), newCar.getOwner().getUsername());
-        } catch (HttpServerErrorException ex) {
+        } catch (RuntimeException ex) {
             log.error("Failed to create car for user " + principal.getName(), ex);
             model.addAttribute("app_error", "Failed to create new car");
         }
@@ -113,16 +110,37 @@ public class CarsAppController {
 
     @RequestMapping(value = "/app/details/{carId}", method = RequestMethod.GET)
     public String getCarDetails(Principal principal, Model model, @PathVariable String carId) {
-        CarRepresentation detailedCar = carsClientService.getCarWithDetails(carId); // TODO: I don't need picture here. Improve...
+        CarsClientService.ClientCallResponse<CarRepresentation> response = carsClientService.getCarWithDetails(carId);
 
+        String reqSubmitted = handleRequestSubmitted(response, principal, model);
+        if (reqSubmitted != null) return reqSubmitted;
+
+        CarRepresentation detailedCar = response.getResult();
         model.addAttribute("car", detailedCar);
         return "car-detail";
+
+    }
+
+
+    private String handleRequestSubmitted(CarsClientService.ClientCallResponse response, Principal principal, Model model) {
+        if (response.isRequestSubmitted()) {
+            model.addAttribute("app_error", "Submitted request to the car owner to grant you a permission");
+
+            // Just re-show the page
+            return showCarsPage(principal, model);
+        } else {
+            return null;
+        }
     }
 
 
     @RequestMapping(value = "/app/delete/{carId}", method = RequestMethod.GET)
     public String deleteCar(Principal principal, Model model, @PathVariable String carId) {
-        carsClientService.deleteCar(carId);
+        CarsClientService.ClientCallResponse<Void> clientResponse = carsClientService.deleteCar(carId);
+
+        String reqSubmitted = handleRequestSubmitted(clientResponse, principal, model);
+        if (reqSubmitted != null) return reqSubmitted;
+
         return showCarsPage(principal, model);
     }
 
@@ -130,7 +148,15 @@ public class CarsAppController {
     @RequestMapping(value = "/app/img/{carId}", method = RequestMethod.GET)
     @ResponseBody
     public void getCarImg(Principal principal, Model model, @PathVariable String carId) throws IOException {
-        CarRepresentation detailedCar = carsClientService.getCarWithDetails(carId);
+        CarsClientService.ClientCallResponse<CarRepresentation> clientResponse = carsClientService.getCarWithDetails(carId);
+
+        String reqSubmitted = handleRequestSubmitted(clientResponse, principal, model);
+        // Shoudln't happen
+        if (reqSubmitted != null) return;
+
+
+
+        CarRepresentation detailedCar = clientResponse.getResult();
         String imgString = detailedCar.getBase64Img();
 
         response.setContentType("image/jpeg");
@@ -149,7 +175,7 @@ public class CarsAppController {
 
         model.addAttribute("token", token);
 
-        String tokenString = mapper.writeValueAsString(token);
+        String tokenString = mapperProvider.getMapper().writeValueAsString(token);
         model.addAttribute("tokenString", tokenString);
 
         return "token";
@@ -163,7 +189,7 @@ public class CarsAppController {
 
         model.addAttribute("token", rptToken);
 
-        String tokenString = mapper.writeValueAsString(rptToken);
+        String tokenString = mapperProvider.getMapper().writeValueAsString(rptToken);
         model.addAttribute("tokenString", tokenString);
 
         return "token";

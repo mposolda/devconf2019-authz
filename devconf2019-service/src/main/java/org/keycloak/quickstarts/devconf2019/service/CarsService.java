@@ -41,7 +41,12 @@ public class CarsService {
     }
 
 
-    // Key is ownerUsername, Values are all cars of this owner. Image is not set
+    /**
+     * Return all the cars, which current user is able to see. If "username" is null, we aim to return all the cars of all the users
+     *
+     * @param username
+     * @return Map with all the cars user is able to see. Key is ownerUsername, Values are all cars of this owner. Image is not set in the CarRepresentation instances.
+     */
     public Map<String, List<CarRepresentation>> getCars(String username) {
         Map<String, List<CarRepresentation>> carsRep = new HashMap<>();
 

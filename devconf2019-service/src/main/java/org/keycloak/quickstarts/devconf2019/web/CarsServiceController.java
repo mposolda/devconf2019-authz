@@ -51,13 +51,13 @@ public class CarsServiceController {
     }
 
 
-    @GetMapping(value = "/cars/details/{carId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/cars/{carId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public CarRepresentation getCarDetails(Principal principal, @PathVariable String carId) {
         return carsService.getCarById(carId);
     }
 
 
-    @DeleteMapping(value = "/cars/delete/{carId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @DeleteMapping(value = "/cars/{carId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public void deleteCar(Principal principal, @PathVariable String carId) {
         carsService.deleteCarById(carId);
     }
