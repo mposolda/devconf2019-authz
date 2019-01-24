@@ -87,7 +87,7 @@ public class CarsAppController {
         try {
             CarRepresentation newCar = carsClientService.createCar();
             log.infof("Created new car %s for user %s", newCar.getId(), newCar.getOwner().getUsername());
-        } catch (HttpServerErrorException ex) {
+        } catch (RuntimeException ex) {
             log.error("Failed to create car for user " + principal.getName(), ex);
             model.addAttribute("app_error", "Failed to create new car");
         }
