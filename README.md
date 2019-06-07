@@ -16,5 +16,7 @@ mvn clean install
 
 4) Run CarsServiceApp and CarsApp from IDE (TODO: Need to describe how to run from mvn with the springboot plugin)
 
+5) Go to http://localhost:8080/app and login as alice/alice or other user (See cars-realm.json for the users/passwords).
+
 
 
