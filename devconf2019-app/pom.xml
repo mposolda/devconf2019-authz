@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>devconf2019-app</artifactId>
-    <id>DevConf2019 - App</id>
+    <!-- <id>DevConf2019 - App</id>-->
 
     <properties>
         <springboot-version>2.0.3.RELEASE</springboot-version>
